@@ -1,63 +1,43 @@
 import mammoth from "mammoth"
-import {cleanLines} from "./cleaner.js"
+import { cleanLines } from "./cleaner.js"
 
-export async function parseDocx(filePath){
+export async function parseDocx(filePath) {
 
-const result=await mammoth.extractRawText({path:filePath})
+const result = await mammoth.extractRawText({ path: filePath })
 
-const lines=cleanLines(result.value)
+const lines = cleanLines(result.value)
 
-let data=[]
+let data = []
 
-let currentQuestion=null
-let options={}
+let question = null
+let option = null
 
-for(let i=0;i<lines.length;i++){
+for (let i = 0; i < lines.length; i++) {
 
-const line=lines[i]
+const line = lines[i]
 
-if(/^\d+\./.test(line)){
+// обнаружение вопроса
+if (/^\d+\s*[.)]/.test(line)) {
 
-currentQuestion=lines[i+1]
-options={}
+question = lines[i + 1]
 
 continue
+}
+
+// вариант ответа
+if (/^[A-D][.)]/.test(line)) {
+
+option = lines[i + 1]
 
 }
 
-if(/^[A-D]\)/.test(line)){
-
-const key=line[0]
-
-const optionText=lines[i+1]
-
-const status=lines[i+2]
-
-options[key]={
-text:optionText,
-correct:status==="Дуруст"
-}
-
-}
-
-if(Object.keys(options).length===4){
-
-for(const k in options){
-
-if(options[k].correct){
+// правильный ответ
+if (line === "Дуруст" && question && option) {
 
 data.push({
-
-question:currentQuestion,
-answer:options[k].text
-
+question: question,
+answer: option
 })
-
-}
-
-}
-
-options={}
 
 }
 
