@@ -1894,15 +1894,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_allowed(user.id):
 
         admin_text = (
-            "👤 Новый пользователь\n\n"
-            f"Имя: {user.first_name}\n"
-            f"ID: {user.id}\n\n"
-            f"/access {user.id}"
-        )
+    "👤 Новый пользователь\n\n"
+    f"Имя: {user.first_name}\n"
+    f"ID: {user.id}\n\n"
+    f"`/access {user.id}`"
+)
 
-        await context.bot.send_message(
-            chat_id=ADMIN_ID,
-            text=admin_text
+await context.bot.send_message(
+    chat_id=ADMIN_ID,
+    text=admin_text,
+    parse_mode="Markdown"
+)
         )
 
         await update.message.reply_text(
@@ -2005,4 +2007,5 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()
